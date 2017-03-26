@@ -29,6 +29,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import argparse
+import codecs
 import contextlib
 import doctest
 import io
@@ -125,11 +126,14 @@ def register_code_directive():
                                                            CodeBlockDirective)
 
 
+DECODED_BOM = codecs.BOM_UTF8.decode('utf-8')
+
+
 def strip_byte_order_mark(text):
     """Return text with byte order mark (BOM) removed."""
-    try:
-        return text.encode('utf-8').decode('utf-8-sig')
-    except UnicodeError:
+    if text.startswith(DECODED_BOM):
+        return text[len(DECODED_BOM):]
+    else:
         return text
 
 
