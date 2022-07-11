@@ -26,7 +26,7 @@ rstcheck = "rstcheck:main"
 [tool.poetry.dependencies]
 python = "^3.7"
 docutils = ">=0.7,<0.19"
-types-docutils = ">=0.18,<0.19"
+types-docutils = ">=0.18,<0.20"
 typing-extensions = ">=4.1,<5"
 sphinx = {version = ">=4,<5", optional = true}
 pytest = { version = ">=6", optional = true }
