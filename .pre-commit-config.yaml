@@ -3,7 +3,7 @@ minimum_pre_commit_version: "2.17"
 default_stages: [commit]
 
 ci:
-  skip: [mypy, pylint]
+  skip: [mypy, pylint, python-safety-dependencies-check, flakeheaven]
 
 repos:
   # ----------------------------------------------
@@ -25,7 +25,7 @@ repos:
 
   # file checking out-of-the-box hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: db7346d375eda68a0174f2c057dd97f2fbffe030 # frozen: v4.2.0
+    rev: 3298ddab3c13dd77d6ce1fc0baf97691430d84b0 # frozen: v4.3.0
     hooks:
       - id: check-case-conflict
       - id: check-shebang-scripts-are-executable
@@ -36,12 +36,12 @@ repos:
 
   # safety - python dependency vulnerability checker
   - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: d0c2c5156e146e5030e6aafff1a0cb398875b4f2 # frozen: v1.2.4
+    rev: 8131ecce7c746aa3c0f8ebb453a6df1e0f62b8b5 # frozen: v1.3.0
     hooks:
       - id: python-safety-dependencies-check
         args: ["--full-report"]
         files: pyproject.toml
-        exclude: examples
+        exclude: testing
 
   # ####################################################################################
   #
@@ -55,7 +55,7 @@ repos:
 
   # pyupgrade - upgrade old syntax to new
   - repo: https://github.com/asottile/pyupgrade
-    rev: 256bd84aa5a17edbd3dcfaaa4f30f870168d2838 # frozen: v2.32.0
+    rev: 400a572e713da5a32bf2f00fd2926833b1570956 # frozen: v2.34.0
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -68,7 +68,7 @@ repos:
 
   # black - python formatter
   - repo: https://github.com/psf/black
-    rev: ae2c0758c9e61a385df9700dc9c231bf54887041 # frozen: 22.3.0
+    rev: f6c139c5215ce04fd3e73a900f1372942d58eca0 # frozen: 22.6.0
     hooks:
       - id: black
         args: ["--safe"]
@@ -78,7 +78,7 @@ repos:
     rev: 7ae9389351f4090e3993de28015a05a18ca6b8a7 # frozen: v1.12.1
     hooks:
       - id: blacken-docs
-        exclude: examples|tests
+        exclude: testing|tests
 
   # ----------------------------------------------
   # JS / TS / HTML / CSS / MD / JSON / YAML
@@ -86,9 +86,30 @@ repos:
 
   # prettier - multi formatter
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: 5e374fda194d7f7ce9eebbd582b2a5594838c85b # frozen: v2.6.2
+    rev: 50c5478ed9e10bf360335449280cf2a67f4edb7a # frozen: v2.7.1
     hooks:
       - id: prettier
+
+  # ----------------------------------------------
+  # Spelling dict
+  # ----------------------------------------------
+
+  # Custom hook as python command
+  - repo: local
+    hooks:
+      - id: sort-spelling-dicts
+        name: Sort spelling_dict.txt files
+        description: Sort spelling_dict.txt files
+        language: python
+        entry: python
+        args:
+          - "-c"
+          - |
+            import pathlib;
+            import sys;
+            p = pathlib.Path(sys.argv[1]);
+            p.write_text("\n".join(sorted(set(p.read_text("utf-8").splitlines()))) + "\n", "utf-8")
+        files: "spelling_dict.txt"
 
   # ----------------------------------------------
   # General (code unspecific)
@@ -96,7 +117,7 @@ repos:
 
   # code unspecific out-of-the-box hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: db7346d375eda68a0174f2c057dd97f2fbffe030 # frozen: v4.2.0
+    rev: 3298ddab3c13dd77d6ce1fc0baf97691430d84b0 # frozen: v4.3.0
     hooks:
       - id: end-of-file-fixer
         stages: [commit]
@@ -126,7 +147,7 @@ repos:
 
   # code unspecific out-of-the-box hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: db7346d375eda68a0174f2c057dd97f2fbffe030 # frozen: v4.2.0
+    rev: 3298ddab3c13dd77d6ce1fc0baf97691430d84b0 # frozen: v4.3.0
     hooks:
       - id: check-merge-conflict
       - id: detect-private-key
@@ -137,7 +158,7 @@ repos:
 
   # python specific out-of-the-box hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: db7346d375eda68a0174f2c057dd97f2fbffe030 # frozen: v4.2.0
+    rev: 3298ddab3c13dd77d6ce1fc0baf97691430d84b0 # frozen: v4.3.0
     hooks:
       - id: debug-statements
       - id: fix-encoding-pragma
@@ -157,12 +178,12 @@ repos:
 
   # flakeheaven - wrapper for flake8
   - repo: https://github.com/flakeheaven/flakeheaven
-    rev: "3f0afc179dbd0907230fb3123f2938b0b63d3b7f" # frozen: 0.11.0
+    rev: "b1c9d8c333e7c1fbe4428c5a12ef26f603dca0a7" # frozen: 2.0.0
     hooks:
       - id: flakeheaven
         types: [python]
         additional_dependencies:
-          - "git+https://github.com/cielquan/my-flake8-plugins.git@v1.2.2"
+          - "git+https://github.com/cielquan/my-flake8-plugins.git@v1.3.1"
 
   # Lint hooks managed via tox envs b/c they need the pkg installed
   - repo: local
@@ -191,7 +212,7 @@ repos:
 
   # poetry - python dependency maJSONnagement
   - repo: https://github.com/python-poetry/poetry
-    rev: dca6ff2699a06c0217ed6d5a278fa3146e4136ff # frozen: 1.2.0b1
+    rev: 00e63d093398ea87872067c83c3285e327d02461 # frozen: 1.2.0b2
     hooks:
       - id: poetry-check
 
@@ -210,13 +231,23 @@ repos:
   # ----------------------------------------------
 
   # rstcheck - rst file checker
-  - repo: https://github.com/myint/rstcheck
-    rev: 209a4a9850083ba9922f3094a579c4009927906d # frozen: v5.0.0
+  - repo: https://github.com/rstcheck/rstcheck
+    rev: v6.0.0.post1 # PR
     hooks:
       - id: rstcheck
         additional_dependencies: [sphinx]
-        exclude: examples
+        exclude: testing
         args: ["--config", ".rstcheck.project.cfg"]
+
+  # ----------------------------------------------
+  # Markdown
+  # ----------------------------------------------
+
+  # markdownlint - md file checker
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: 79c5e552066e7ad28aca449e7f2eed692a603abf # frozen: v0.4.0
+    hooks:
+      - id: markdownlint-cli2
 
   # ----------------------------------------------
   # TOML / YAML
@@ -224,7 +255,7 @@ repos:
 
   # JSON specific out-of-the-box hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: db7346d375eda68a0174f2c057dd97f2fbffe030 # frozen: v4.2.0
+    rev: 3298ddab3c13dd77d6ce1fc0baf97691430d84b0 # frozen: v4.3.0
     hooks:
       - id: check-toml
       - id: check-yaml
@@ -240,6 +271,6 @@ repos:
   # ----------------------------------------------
 
   - repo: https://github.com/pre-commit/pre-commit
-    rev: 0276e25f713ddfd66482f358d238186ca47a6eb4 # frozen: v2.18.1
+    rev: cc9d950601cd3eba27e8395a7edcd455262705d9 # frozen: v2.19.0
     hooks:
       - id: validate_manifest

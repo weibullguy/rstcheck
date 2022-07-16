@@ -20,10 +20,10 @@ body:
       options:
         - label: >
             I tested with the
-            [latest released version](https://github.com/myint/rstcheck/releases/latest).
+            [latest released version](https://github.com/rstcheck/rstcheck/releases/latest).
           required: true
         - label: >
-            I have checked the [issues](https://github.com/myint/rstcheck/issues)
+            I have checked the [issues](https://github.com/rstcheck/rstcheck/issues)
             and think that this is not a duplicate.
           required: true
         - label: I added a very descriptive title to this issue.
@@ -106,12 +106,12 @@ body:
     attributes:
       label: rstcheck Version
       description: |
-        What rstcheck version are you using?
+        What rstcheck & rstcheck-core versions are you using?
 
-        You can find the rstcheck version with:
+        You can find the versions with:
 
         ```shell
-        python -c "import rstcheck; print(rstcheck.__version__)"
+        rstcheck --version
         ```
     validations:
       required: true

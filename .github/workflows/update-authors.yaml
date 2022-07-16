@@ -12,15 +12,12 @@ on: # yamllint disable-line rule:truthy
     tags:
       - "!*"
     branches:
-      - master
+      - main
+      - "test-me-*"
 
 jobs:
   update-authors:
     name: Update AUTHORS.rst file
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' &&
-      contains(toJson(github.event.head_commit.message), '[skip ci]') == false)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -57,7 +54,7 @@ jobs:
               ".. Every manual change will be overwritten on push to main.\n"
               ".. You can find it here: ``.github/workflows/update-authors.yaml``\n"
               ".. For more information see "
-              "`https://github.com/myint/rstcheck/graphs/contributors`\n\n"
+              "`https://github.com/rstcheck/rstcheck/graphs/contributors`\n\n"
               "Author\n"
               "------\n"
               "Steven Myint <git@stevenmyint.com>\n\n"

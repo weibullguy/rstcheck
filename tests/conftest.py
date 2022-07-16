@@ -1,13 +1,7 @@
-"""Testing utility."""
-import typing
-
-import pytest
-
-import rstcheck
+"""Fixtures for tests."""
+import pathlib
 
 
-@pytest.fixture(name="enable_sphinx_if_possible", scope="module")
-def _enable_sphinx_if_possible_fixture() -> typing.Generator[None, None, None]:
-    """Enable sphinx for tests if possible."""
-    with rstcheck.enable_sphinx_if_possible():
-        yield
+REPO_DIR = pathlib.Path(__file__).resolve().parents[1].resolve()
+TESTING_DIR = REPO_DIR / "testing"
+EXAMPLES_DIR = TESTING_DIR / "examples"
