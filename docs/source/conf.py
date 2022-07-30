@@ -1,4 +1,5 @@
 """Configuration file for the Sphinx documentation builder."""
+
 # pylint: disable=C0103
 import os
 import re
@@ -30,21 +31,20 @@ author = "Steven Myint <git@stevenmyint.com>"
 GH_REPO_LINK = "https://github.com/rstcheck/rstcheck"
 CREATION_YEAR = 2013
 CURRENT_YEAR = f"{date.today().year}"
-copyright = (  # noqa: VNE003 # pylint: disable=W0622
-    f"{CREATION_YEAR}{('-' + CURRENT_YEAR) if CURRENT_YEAR != CREATION_YEAR else ''}, "
+copyright = (
+    f"{CREATION_YEAR}{f'-{CURRENT_YEAR}' if CURRENT_YEAR != CREATION_YEAR else ''}, "
     + f"{author} and AUTHORS"
 )
+
 RSTCHECK_VERSION = metadata(project)["Version"]
 release = RSTCHECK_VERSION  #: The full version, including alpha/beta/rc tags
 version_parts = re.search(r"^v?(?P<version>\d+\.\d+)\.\d+[-.]?(?P<tag>[a-z]*)[\.]?\d*", release)
 #: Major + Minor version like (X.Y)
-version = None if not version_parts else version_parts.group("version")
+version = version_parts["version"] if version_parts else None
 #: only tags like alpha/beta/rc
-RELEASE_LEVEL = None if not version_parts else version_parts.group("tag")
+RELEASE_LEVEL = version_parts["tag"] if version_parts else None
 
 
-#: -- GENERAL CONFIG -------------------------------------------------------------------
-extensions: t.List[str] = []
 today_fmt = "%Y-%m-%d"
 exclude_patterns: t.List[str] = []  #: Files to exclude for source of doc
 
@@ -71,8 +71,6 @@ rst_epilog = """
 tls_cacerts = os.getenv("SSL_CERT_FILE")
 
 
-#: -- M2R2 -----------------------------------------------------------------------------
-extensions.append("m2r2")
 source_suffix = [".rst", ".md"]
 
 
@@ -83,16 +81,16 @@ linkcheck_retries = 5
 linkcheck_timeout = 30
 
 
-#: -- DEFAULT EXTENSIONS ---------------------------------------------------------------
-#: Global
-extensions.append("sphinx.ext.duration")
-extensions.append("sphinx.ext.coverage")  #: sphinx-build -b coverage ...
 coverage_write_headline = False
 coverage_show_missing_items = True
-extensions.append("sphinx.ext.doctest")  #: sphinx-build -b doctest ...
+extensions: t.List[str] = [
+    "m2r2",
+    "sphinx.ext.duration",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.autosectionlabel",
+]
 
-#: ReStructuredText
-extensions.append("sphinx.ext.autosectionlabel")
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 2
 extensions.append("sphinx.ext.ifconfig")

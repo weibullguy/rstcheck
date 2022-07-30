@@ -618,7 +618,7 @@ class TestInlineFlowControlComments:
     @pytest.mark.xfail(
         sys.platform == "win32", reason="Unknown Windows specific wrong result", strict=True
     )
-    @pytest.mark.skipif(sys.version_info[0:2] > (3, 9), reason="Requires python3.9 or lower")
+    @pytest.mark.skipif(sys.version_info[:2] > (3, 9), reason="Requires python3.9 or lower")
     def test_bad_example_has_only_one_issue_pre310(
         cli_app: typer.Typer, cli_runner: typer.testing.CliRunner
     ) -> None:
@@ -656,7 +656,7 @@ class TestInlineFlowControlComments:
     @pytest.mark.xfail(
         sys.platform == "win32", reason="Unknown Windows specific wrong result", strict=True
     )
-    @pytest.mark.skipif(sys.version_info[0:2] > (3, 9), reason="Requires python3.9 or lower")
+    @pytest.mark.skipif(sys.version_info[:2] > (3, 9), reason="Requires python3.9 or lower")
     def test_nested_bad_example_has_only_one_issue_pre310(
         cli_app: typer.Typer, cli_runner: typer.testing.CliRunner
     ) -> None:

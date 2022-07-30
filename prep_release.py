@@ -1,4 +1,5 @@
 """Script for preparing the repo for a new release."""
+
 import argparse
 import re
 import subprocess  # noqa: S404
@@ -6,7 +7,7 @@ import sys
 from datetime import date
 
 
-if sys.version_info[0:2] <= (3, 6):
+if sys.version_info[:2] <= (3, 6):
     raise RuntimeError("Script runs only with python 3.7 or newer.")
 
 
@@ -17,12 +18,11 @@ MAJOR = ("major", "breaking")
 REPO_URL = "https://github.com/rstcheck/rstcheck"
 
 
-#: -- UTILS ----------------------------------------------------------------------------
 class PyprojectError(Exception):
     """Exception for lookup errors in pyproject.toml file."""
 
 
-def _get_config_value(section: str, key: str) -> str:  # noqa: CCR001
+def _get_config_value(section: str, key: str) -> str:    # noqa: CCR001
     """Extract a config value from pyproject.toml file.
 
     :return: config value
@@ -40,9 +40,10 @@ def _get_config_value(section: str, key: str) -> str:  # noqa: CCR001
             break
 
         if start and line.strip().startswith(key):
-            match = re.match(r"\s*" + key + r"""\s?=\s?["']{1}([^"']*)["']{1}.*""", line)
-            if match:
-                return match.group(1)
+            if match := re.match(
+                r"\s*" + key + r"""\s?=\s?["']{1}([^"']*)["']{1}.*""", line
+            ):
+                return match[1]
             raise PyprojectError(
                 f"No value for key '{key}' in {section} section could be extracted."
             )
@@ -98,15 +99,12 @@ def bump_version(release_type: str = "patch") -> str:
         raise ValueError(f"Unparsable version: {current_version}")
 
     if release_type in MAJOR:
-        version = f"{int(version_parts.group('major')) + 1}.0.0"
+        version = f"{int(version_parts['major']) + 1}.0.0"
     elif release_type in MINOR:
-        version = f"{version_parts.group('major')}" f".{int(version_parts.group('minor')) + 1}.0"
+        version = f"{version_parts['major']}.{int(version_parts['minor']) + 1}.0"
     elif release_type in PATCH:
-        version = (
-            f"{version_parts.group('major')}"
-            f".{version_parts.group('minor')}"
-            f".{int(version_parts.group('patch')) + 1}"
-        )
+        version = f"{version_parts['major']}.{version_parts['minor']}.{int(version_parts['patch']) + 1}"
+
     else:
         print("Given `RELEASE TYPE` is invalid.")
         sys.exit(1)
@@ -204,7 +202,8 @@ def _main() -> int:
             ["git", "rev-list", "--max-parents=0", "HEAD"],
             check=True,
             capture_output=True,
-        ).stdout.decode()[0:7]
+        ).stdout.decode()[:7]
+
     else:
         current_version = _get_config_value("[tool.poetry]", "version")
         release_version = bump_version(args.increase_type)
